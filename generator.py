@@ -24,23 +24,23 @@ class Dataset2hD(Dataset):
         for k in dataurls: # why starting from [1]? -> changed to whole training_cases
             # cimg = np.expand_dims(sitk.GetArrayFromImage(sitk.ReadImage(f"{datafolder}/{k}/rawavg.nii")),0) # needed?
             # cseg = np.expand_dims(sitk.GetArrayFromImage(sitk.ReadImage(f"{datafolder}/{k}/aseg.nii")),0) # needed?
-            img = np.expand_dims(sitk.GetArrayFromImage(sitk.ReadImage(k[0])), 0) # why expand with one? for matrix purpose calculating theta/bias?# needed?
-            if (img.shape[2] != 512) or (img.shape[3] != 512):
+            imga = np.expand_dims(sitk.GetArrayFromImage(sitk.ReadImage(k[0])), 0) # why expand with one? for matrix purpose calculating theta/bias?# needed?
+            if (imga.shape[2] != 512) or (imga.shape[3] != 512):
                 continue
-            seg = np.expand_dims(sitk.GetArrayFromImage(sitk.ReadImage(k[1])), 0)  # why expand again?
-            if (seg.shape[2] != 512) or (seg.shape[3] != 512):
+            sega = np.expand_dims(sitk.GetArrayFromImage(sitk.ReadImage(k[1])), 0)  # why expand again?
+            if (sega.shape[2] != 512) or (sega.shape[3] != 512):
                 continue
-            valid_slices = np.argwhere(np.squeeze(seg).sum(axis=2).sum(axis=1) > 0) # only slices with lesion
-            img = img[:,valid_slices[:,0],:,:] # reduce img to valid slides in dimension [1]
-            seg = seg[:,valid_slices[:,0],:,:] # reduce seg to valid slides in dimension [1]
+            valid_slices = np.argwhere(np.squeeze(sega).sum(axis=2).sum(axis=1) > 0) # only slices with lesion
+            img = imga[:,valid_slices[:,0],:,:] # reduce img to valid slides in dimension [1]
+            seg = sega[:,valid_slices[:,0],:,:] # reduce seg to valid slides in dimension [1]
             # GM = indxs == 2
             # WM = indxs == 1
 
 
-            # cseg = np.concatenate((WM, GM), axis=0) # Is that relevant for our project?
+            # cseg = np.concatenate((WM, GM), axis=0) # needed?
 
-            # img = np.concatenate((img, cimg), axis=1)
-            # seg = np.concatenate((seg, cseg), axis=1)
+            # img = np.concatenate((img, cimg), axis=1) # needed?
+            # seg = np.concatenate((seg, cseg), axis=1) # needed?
 
         # lets just look at AUG for 1 slice
         indexx = 5
@@ -73,7 +73,7 @@ class Dataset2hD(Dataset):
 
 
 
-    def __getitem__(self, index: Union[int, slice, Sequence[int]]):
+    def __getitem__(self, index: Union[int, slice, Sequence[int]]):  # to analyse just a part of whole data to safe time?
         """
         Returns a `Subset` if `index` is a slice or Sequence, a data item otherwise.
         """
